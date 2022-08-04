@@ -1,16 +1,16 @@
 #!/bin/bash
-you=/usr/local/bin/you-get
+lux=/usr/local/bin/lux
 #telegram参数
 telegram_bot_token=""
 telegram_chat_id=""
 #RSS 地址
-rssURL=""
+rssURL="http://你的rsshub服务地址/bilibili/$1/$2/$3 -q -O -"
 #脚本存放地址
-scriptLocation="/root/bili/"
+scriptLocation="/root/bilidown/bili-cookies/"
 #视频存放地址
-videoLocation="/root/Bilibili/"
+videoLocation="/root/bilidown/bili-down/$4/"
 #邮件地址
-mailAddress=""
+mailAddress="一般不用"
 
 #抓取rss更新
 content=$(wget $rssURL -q -O -)
@@ -54,13 +54,13 @@ result6=$(echo $oldBV | grep "$av")
 #判断当前时间戳和上次记录是否相同，不同则代表收藏列表更新
 if [ "$pubdate" != "$olddate" ] && [ "$result" != "" ] && [ "$result6" = "" ]; then
     #Cookies可用性检查
-    stat=$($you -i -l -c "$scriptLocation"cookies.txt https://www.bilibili.com/video/BV1fK4y1t7hj)
-    substat=${stat#*quality:}
+    stat=$($lux -i -c "$scriptLocation"cookies.txt https://www.bilibili.com/video/BV1fK4y1t7hj)
+    substat=${stat#*Quality:}
     data=${substat%%#*}
-    quality=${data%%size*}
-    if [[ $quality =~ "4K" ]]; then
+    quality=${data%%Size*}
+    if [[ $quality =~ "1080P" ]]; then
         #清空 Bilibili 文件夹
-        rm -rf "$videoLocation"*
+        #rm -rf "$videoLocation"*
         #判断是否为重复标题
         if [ "$result5" != "" ]; then
             time=$(date "+%Y-%m-%d_%H:%M:%S")
@@ -79,32 +79,32 @@ if [ "$pubdate" != "$olddate" ] && [ "$result" != "" ] && [ "$result6" = "" ]; t
         #记录BV号
         echo $av >>"${scriptLocation}"BV.txt
         #获取视频清晰度以及大小信息
-        stat=$($you -i -l -c "$scriptLocation"cookies.txt $link)
+        stat=$($lux -i -c "$scriptLocation"cookies.txt $link)
         #有几P视频
-        count=$(echo $stat | awk -F'title' '{print NF-1}')
+        count=$(echo $stat | awk -F'Title' '{print NF-1}')
         #echo $count
         for ((i = 0; i < $count; i++)); do
-            stat=${stat#*title:}
-            title=${stat%%streams:*}
-            substat=${stat#*quality:}
-            data=${substat%%#*}
-            quality=${data%%size*}
-            size=${data#*size:}
-            title=$(echo $title)
-            quality=$(echo $quality)
-            size=$(echo $size)
-            #每一P的视频标题，清晰度，大小，发邮件用于检查下载是否正确进行
-            #message=${message}"Title: "${title}$'\n'"Quality: "${quality}$'\n'"Size: "${size}$'\n\n' #邮件方式
-            message=${message}"Title:%20"${title}"%0AQuality:%20"${quality}"%0ASize:%20"${size}"%0A%0A" #telegram方式
+			stat=${stat#*Title:}
+			title=${stat%%Type:*}
+			substat=${stat#*Quality:}
+			data=${substat%%#*}
+			quality=${data%%Size*}
+			size=${data#*Size:}
+			title=$(echo $title)
+			quality=$(echo $quality)
+			size=$(echo $size)
+			#每一P的视频标题，清晰度，大小，发邮件用于检查下载是否正确进行
+			#message=${message}"Title: "${title}$'\n'"Quality: "${quality}$'\n'"Size: "${size}$'\n\n' #邮件方式
+			message=${message}"Title:%20"${title}"%0AQuality:%20"${quality}"%0ASize:%20"${size}"%0A%0A" #telegram方式
         done
-        #发送开始下载邮件（自行修改邮件地址）
+		#发送开始下载邮件（自行修改邮件地址）
         #echo "$message" | mail -s "BFD：开始下载" $mailAddress
         curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>BFD：开始下载</b>%0A%0A$message"
-        #下载视频到指定位置（视频存储位置自行修改；you-get下载B站经常会出错，所以添加了出错重试代码）
+        #下载视频到指定位置（视频存储位置自行修改；下载B站经常会出错，所以添加了出错重试代码）
         count=1
         echo "1" > "${scriptLocation}${cur_sec}mark.txt"
         while true; do
-            $you -l -c "$scriptLocation"cookies.txt -o "$videoLocation$name" $link > "${scriptLocation}${cur_sec}.txt" #如果是邮件通知，删除 > "${scriptLocation}${cur_sec}.txt"
+            $lux -C -c "$scriptLocation"cookies.txt -o "$videoLocation$name" $link > "${scriptLocation}${cur_sec}.txt" #如果是邮件通知，删除 > "${scriptLocation}${cur_sec}.txt"
             if [ $? -eq 0 ]; then
                 #下载完成
                 echo "0" > "${scriptLocation}${cur_sec}mark.txt"
@@ -134,8 +134,8 @@ if [ "$pubdate" != "$olddate" ] && [ "$result" != "" ] && [ "$result6" = "" ]; t
                 #echo "$videomessage" | mail -s "BFD：下载完成" $mailAddress
                 curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>BFD：下载完成</b>%0A%0A$videomessage"
                 #上传至OneDrive 百度云
-                /usr/bin/rclone copy "$videoLocation$name" OneDrive:
-                /usr/local/bin/BaiduPCS-Go upload "$videoLocation$name" /
+                /usr/bin/rclone copy "$videoLocation" od-bilidown-pypypy:/bilidown-2
+                #/usr/local/bin/BaiduPCS-Go upload "$videoLocation$name" /
                 #发送通知
                 #echo "$title" | mail -s "BFD：上传完成" $mailAddress #邮件方式
                 curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>BFD：上传完成</b>%0A%0A$title"
