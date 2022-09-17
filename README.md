@@ -4,6 +4,10 @@
 
 此脚本为自用脚本`deepin/ubuntu`，不保证其他机子能正常运行
 
+原作者指路:https://github.com/Left024/BiliFavoritesDownloader
+
+我只改了改下载
+
 ## 功能
 
 - [x] telegram 通知，实时下载进度查看
@@ -12,16 +16,14 @@
 - [x] 封面图下载
 - [x] xml 转 ass
 - [x] 下载完成上传 OneDrive
-- [ ] 一键脚本完成初始化设置
-- [ ] 初次使用下载收藏夹以前的所有视频
 
 ## 更新日志
 
 ### 2022/8/02
 
-修改原版的[you-get](https://github.com/soimort/you-get)为[lux](https://github.com/soimort/you-get),因为`you-get`默认下载视频格式为`h265/hevc`格式,导致谷歌浏览器在线播放不了,所以替换为`lux`可默认下`h264`格式.
+修改原版的[you-get下载](https://github.com/soimort/you-get)为[lux下载](https://github.com/iawia002/lux/),因为`you-get`默认下载视频格式为`h265/hevc`格式,导致谷歌浏览器在线播放不了,所以替换为`lux`可默认下`h264`格式.
 
-增加一个`bilidown-lux-run.sh`脚本用来传递参数，每行可以对应不同的用户和收藏夹
+增加一个`bilidown-lux-run.sh`脚本用来传递参数，每行可以对应不同的用户和收藏夹。（看注释就明白了。）
 
 ### 2021/12/02
 
@@ -38,6 +40,10 @@
 ![](https://raw.githubusercontent.com/left916/images/main/2021/10/20211110134148.png)
 
 ## 使用
+
+看博客吧，较详细。
+
+https://hechuan.me/bilidown
 
 ```shell
 #root用户登陆
@@ -57,42 +63,69 @@ rm -rf lux*
 
 ```
 
+下载仓库后记得把文件夹名字`BiliFavoritesDownloader`改为`bilidown`。放进`root目录就行`
+
+运行前记得给文件一下权限,`chmod +x`
 
 
-脚本原理是每分钟检查 RSS，然后通过 [lux](https://github.com/iawia002/lux/) 进行下载（需要额外安装 ffmpeg，否则无法合并下载完的视频且不会自动下载最高画质）
+
+### 原理
+
+是每分钟检查 RSS，然后通过 [lux](https://github.com/iawia002/lux/) 进行下载（需要额外安装 ffmpeg，否则无法合并下载完的视频且不会自动下载最高画质）
 
 https://docs.rsshub.app/social-media.html#bilibili
 
-建议用别人的rsshub服务或者自己用docker建一个,官方设置的缓存时间太长了,导致B站已经点了收藏rsshun这里却还没刷新.
+### 建议
+
+建议用别人的rsshub服务或者自己用docker建一个,官方设置的缓存时间太长了,导致B站已经点了收藏rsshub这里却还没刷新.
 
 如何建自己的rsshub服务,官方已经给了教程了:https://docs.rsshub.app/install/#docker-jing-xiang
 
+或者看博客去：https://hechuan.me/bilidown
 
+### 必要
 
-脚本中注释已经写的很明白了，必须要修改的是```RSS地址```和```邮箱地址```，可选修改地址为```脚本存放地址```和```视频存放地址```
+脚本中注释已经写的很明白了，必须要修改的是bilidown-lux.sh文件中的```RSS地址```
 
-默认```脚本存放地址```为```/root/bilidown/bili-cookies/```
-默认```视频存放地址```为```/root/bilidown/bili-down/$4/```
+与bilidown-lux-run.sh文件中，你要下载的up主的id和昵称
+
+可选修改：```视频存放地址```
+默认的```视频存放地址```为```/root/bilidown/bili-down/```目录
 
 邮件通知使用的是 ```mailutils``` ，不是所有 VPS 都能用，自行测试
 
-telegram bot 的 token 和 chat_id 自行搜索获取方法
+### 电报通知
 
-最高画质下载需要设置```cookies.txt```，默认存放在```/root/bilidown/bili-cookies/```
+telegram bot 的 token 和 chat_id 自行搜索获取方法
+[点我谷歌一下](https://www.google.com/search?q=%E7%94%B5%E6%8A%A5%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%95%99%E7%A8%8B)
+
+### cookies
+
+高画质下载需要设置```cookies.txt```，默认存放在```/root/bilidown/bili-cookies/```
 
 Chrome 可以安装 [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg) 插件，将```导出格式```设置为```Netscape HTTP Cookies File```然后导出粘贴在```cookies.txt```中即可
 
-xml转ass使用的是[DanmakuFactory](https://github.com/hihkm/DanmakuFactory)，这里提供了已编译好的可执行文件，移动到`/root/bilidown/bili-cookies/`下,
+### 弹幕转化
+
+xml转ass使用的是[DanmakuFactory](https://github.com/hihkm/DanmakuFactory)，这里提供了已编译好的可执行文件，在`/root/bilidown/bili-cookies/`目录下,一般不需要动了。无法转换的话可能是权限问题，给下权限：`chmod 0777 DanmakuFactory ` 
+
+### 上传云盘
 
 OneDrive 使用的是[rclone](https://github.com/rclone/rclone)，需要自行配置
 
+137行,自行修改
+
 百度云 使用的是[BaiduPCS-Go](https://github.com/qjfoidnh/BaiduPCS-Go)，需要自行配置
 
-配置完成后设置```crontab```即可使用,默认十分钟循环一次.
+### 设置定时任务
+
+配置完成后设置```crontab```定时任务即可使用,默认十分钟循环一次
 
 ```shell
 */10 * * * * /bin/bash /root/bilidown/bilidown-lux-run.sh >/dev/null 2>&1
 ```
+
+不会crontab的可以看：https://www.runoob.com/linux/linux-comm-crontab.html
 
 ## 效果
 
@@ -100,19 +133,33 @@ OneDrive 使用的是[rclone](https://github.com/rclone/rclone)，需要自行�
 
 ![点击收藏](https://raw.githubusercontent.com/left916/images/main/picgo/picgo20210913230146.png)
 
-telegram 通知（实时下载进度）
-
-![telegram 通知开始下载](https://raw.githubusercontent.com/left916/images/main/picgo/20211004113050.png)
-
 下载完成后通知
 
-![telegram 通知](https://raw.githubusercontent.com/left916/images/main/picgo/20211004113146.png)
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bidown4.png)
 
 下载完成后的文件目录
 
-![文件目录](https://raw.githubusercontent.com/left916/images/main/picgo/picgo20210913230035.png)
+（默认不会自动删除，想上传完就删除本地的话，看）
+
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bidown1.png)
+
+搭配onedrive云盘和[alist](https://github.com/alist-org/alist)
+
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bidown2.png)
+
+
+
+下载弹幕与字幕（如果有的话）
+
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bilidown3.png)
+
+
+
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bilidown5.png)
 
 ## 感谢
+
+[BiliFavoritesDownloader](https://github.com/Left024/BiliFavoritesDownloader)
 
 [lux](https://github.com/iawia002/lux/)
 

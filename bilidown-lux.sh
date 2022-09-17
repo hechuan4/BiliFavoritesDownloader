@@ -3,7 +3,7 @@ lux=/usr/local/bin/lux
 #telegram参数
 telegram_bot_token=""
 telegram_chat_id=""
-#RSS 地址
+#RSS 地址 自建的话就写:127.0.0.1:1200
 rssURL="http://你的rsshub服务地址/bilibili/$1/$2/$3 -q -O -"
 #脚本存放地址
 scriptLocation="/root/bilidown/bili-cookies/"
@@ -134,7 +134,7 @@ if [ "$pubdate" != "$olddate" ] && [ "$result" != "" ] && [ "$result6" = "" ]; t
                 #echo "$videomessage" | mail -s "BFD：下载完成" $mailAddress
                 curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>BFD：下载完成</b>%0A%0A$videomessage"
                 #上传至OneDrive 百度云
-                /usr/bin/rclone copy "$videoLocation" od-bilidown-pypypy:/bilidown-2
+                /usr/bin/rclone copy "$videoLocation" 你的rclone云盘名字:/文件夹/
                 #/usr/local/bin/BaiduPCS-Go upload "$videoLocation$name" /
                 #发送通知
                 #echo "$title" | mail -s "BFD：上传完成" $mailAddress #邮件方式
