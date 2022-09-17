@@ -147,7 +147,9 @@ OneDrive 使用的是[rclone](https://github.com/rclone/rclone)，需要自行�
 
 下载完成后的文件目录
 
-（默认不会自动删除，想上传完就删除本地的话，看）
+（默认不会自动删除，想上传完就删除本地的话，
+
+看bilidown-lux.sh文件的63行`#rm -rf "$videoLocation"*`把注释取消就行）
 
 ![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bidown1.png)
 
