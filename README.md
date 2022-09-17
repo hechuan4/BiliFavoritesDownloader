@@ -94,6 +94,14 @@ https://docs.rsshub.app/social-media.html#bilibili
 
 邮件通知使用的是 ```mailutils``` ，不是所有 VPS 都能用，自行测试
 
+### 必要2
+
+如果是你的大会员
+
+记得把bilidown-lux.sh文件的61行.`if [[ $quality =~ "1080P" ]]; then`改成`4K`
+
+不是大会员就不用改了
+
 ### 电报通知
 
 telegram bot 的 token 和 chat_id 自行搜索获取方法
