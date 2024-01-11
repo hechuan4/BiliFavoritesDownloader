@@ -6,9 +6,9 @@ telegram_chat_id=""
 #RSS 地址 自建的话就写:127.0.0.1:1200
 rssURL="http://你的rsshub服务地址/bilibili/$1/$2/$3 -q -O -"
 #脚本存放地址
-scriptLocation="/root/bilidown/bili-cookies/"
+scriptLocation="/root/BiliFavoritesDownloader/bili-cookies/"
 #视频存放地址
-videoLocation="/root/bilidown/bili-down/$4/"
+videoLocation="/root/BiliFavoritesDownloader/bili-down/$4/"
 #邮件地址
 mailAddress="一般不用"
 
