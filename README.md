@@ -21,7 +21,11 @@
 
 ### 2022/8/02
 
-修改原版的[you-get下载](https://github.com/soimort/you-get)为[lux下载](https://github.com/iawia002/lux/),因为`you-get`默认下载视频格式为`h265/hevc`格式,导致谷歌浏览器在线播放不了,所以替换为`lux`可默认下`h264`格式.
+修改原版的[you-get下载](https://github.com/soimort/you-get)为[lux下载](https://github.com/iawia002/lux/),因为`you-get`默认下载视频格式为`h265/hevc`格式,~~导致谷歌浏览器在线播放不了,~~所以替换为`lux`可默认下`h264`格式.
+
+2024/1/12 谷歌浏览器早就可以解码`hevc`了，不过还是用`lux`吧，毕竟安装简单，`you-get`还得安装`python`
+
+
 
 增加一个`bilidown-lux-run.sh`脚本用来传递参数，每行可以对应不同的用户和收藏夹。（看注释就明白了。）
 
@@ -61,11 +65,11 @@ rm -rf lux*
 #命令行输入lux -v
 有提示:lux: version xxxx, A fast and simple video downloader.证明安装成功
 
+
+# 这里有一点注意，如果你的机器不是amd64/x86的话，记得把下载链接改下。
 ```
 
-下载仓库后记得把文件夹名字`BiliFavoritesDownloader`改为`bilidown`。放进`root目录就行`
-
-运行前记得给文件一下权限,`chmod +x`
+运行前记得给文件一下权限,`chmod +x`，放进`root`目录就行
 
 
 
@@ -90,7 +94,7 @@ https://docs.rsshub.app/social-media.html#bilibili
 与bilidown-lux-run.sh文件中，你要下载的up主的id和昵称
 
 可选修改：```视频存放地址```
-默认的```视频存放地址```为```/root/bilidown/bili-down/```目录
+默认的```视频存放地址```为```/root/BiliFavoritesDownloader/bili-down/```目录
 
 邮件通知使用的是 ```mailutils``` ，不是所有 VPS 都能用，自行测试
 
@@ -109,13 +113,21 @@ telegram bot 的 token 和 chat_id 自行搜索获取方法
 
 ### cookies
 
-高画质下载需要设置```cookies.txt```，默认存放在```/root/bilidown/bili-cookies/```
+高画质下载需要设置```cookies.txt```，默认存放在```/root/BiliFavoritesDownloader/bili-cookies/```
 
 Chrome 可以安装 [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg) 插件，将```导出格式```设置为```Netscape HTTP Cookies File```然后导出粘贴在```cookies.txt```中即可
 
+
+
+**2024/1/12**: `cookies`经常失效，这个确实不知道为什么。但是通过浏览器的无痕窗口/隐身模式来获取`cookies`后，貌似时间会长很多。
+
+下图为如何在无痕模式下打开浏览器插件。
+
+![](https://raw.githubusercontent.com/hechuan4/CDN/main/cdn/bilidown6.png)
+
 ### 弹幕转化
 
-xml转ass使用的是[DanmakuFactory](https://github.com/hihkm/DanmakuFactory)，这里提供了已编译好的可执行文件，在`/root/bilidown/bili-cookies/`目录下,一般不需要动了。无法转换的话可能是权限问题，给下权限：`chmod 0777 DanmakuFactory ` 
+xml转ass使用的是[DanmakuFactory](https://github.com/hihkm/DanmakuFactory)，这里提供了已编译好的可执行文件，在`/root/BiliFavoritesDownloader/bili-cookies/`目录下,一般不需要动了。无法转换的话可能是权限问题，给下权限：`chmod 0777 DanmakuFactory ` 
 
 ### 上传云盘
 
@@ -130,10 +142,14 @@ OneDrive 使用的是[rclone](https://github.com/rclone/rclone)，需要自行�
 配置完成后设置```crontab```定时任务即可使用,默认十分钟循环一次
 
 ```shell
-*/10 * * * * /bin/bash /root/bilidown/bilidown-lux-run.sh >/dev/null 2>&1
+*/10 * * * * /bin/bash /root/BiliFavoritesDownloader/bilidown-lux-run.sh >/dev/null 2>&1
 ```
 
 不会crontab的可以看：https://www.runoob.com/linux/linux-comm-crontab.html
+
+在线测试工具看看你写的定时任务对不对：https://tool.lu/crontab/
+
+在线生成定时任务的工具：https://www.bejson.com/othertools/cron/
 
 ## 效果
 

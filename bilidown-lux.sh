@@ -3,7 +3,7 @@ lux=/usr/local/bin/lux
 #telegram参数
 telegram_bot_token=""
 telegram_chat_id=""
-#RSS 地址 自建的话就写:127.0.0.1:1200
+#RSS 地址 自建rsshub的话就写:127.0.0.1 默认端口为 :1200 例：127.0.0.1:1200
 rssURL="http://你的rsshub服务地址/bilibili/$1/$2/$3 -q -O -"
 #脚本存放地址
 scriptLocation="/root/BiliFavoritesDownloader/bili-cookies/"
@@ -78,6 +78,8 @@ if [ "$pubdate" != "$olddate" ] && [ "$result" != "" ] && [ "$result6" = "" ]; t
         echo $name >>"${scriptLocation}"title.txt
         #记录BV号
         echo $av >>"${scriptLocation}"BV.txt
+		echo $av >"$scriptLocation"av.txt
+        echo $link >"$scriptLocation"link.txt
         #获取视频清晰度以及大小信息
         stat=$($lux -i -c "$scriptLocation"cookies.txt $link)
         #有几P视频
